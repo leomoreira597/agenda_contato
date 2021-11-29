@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'package:agenda_contatos/helpers/contato_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -9,29 +10,88 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   ContactHelper helper = ContactHelper();
-
+  List<Contact> contacts = [];
 
   @override
   void initState() {
     super.initState();
 
-   /* Contact c = Contact();
-    c.name = "Leonardo Moreira2";
-    c.email = "lmoreira5972@gmail.com";
-    c.phone = "119336794400";
-    c.img = "imgteste2";
-
-    helper.saveContact(c);*/
-
     helper.getAllContacts().then((list) {
-      print(list);
+      setState(() {
+        contacts = list;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Contatos"),
+        backgroundColor: Colors.red,
+        centerTitle: true,
+      ),
+      backgroundColor: Colors.white,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.red,
+      ),
+      body: ListView.builder(
+          padding: const EdgeInsets.all(10.0),
+          itemCount: contacts.length,
+          itemBuilder: (context, index) {}),
+    );
+  }
+
+  Widget _contectCard(BuildContext context, int index) {
+    return GestureDetector(
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              Container(
+                width: 80.0,
+                height: 80.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      image: contacts[index].img != null
+                          ? FileImage(File(contacts[index].img))
+                          : AssetImage("assets/person.png")),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 10.0),
+                child: Column(
+                  children: [
+                    Text(
+                      contacts[index].name ?? "",
+                      style: const TextStyle(
+                          fontSize: 22.0, fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    Text(
+                      contacts[index].email ?? "",
+                      style: const TextStyle(
+                          fontSize: 18.0,
+                      ),
+                    ),
+                    Text(
+                      contacts[index].phone ?? "",
+                      style: const TextStyle(
+                          fontSize: 18.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
