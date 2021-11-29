@@ -16,16 +16,15 @@ class ContactHelper {
   factory ContactHelper() => _instance;
 
   ContactHelper.internal();
+//Retirada do Future para apenas o indicador "?", tá certo? só Deus sabe mas o erro sumiu
+  Database? _db;
 
-  late Database _db;
-
-  Future<Database> get db async {
+   get db async {
     if(_db != null){
-      return _db;
     } else {
       _db = await initDb();
-      return _db;
     }
+    return _db;
   }
 
   Future<Database> initDb() async {
@@ -39,9 +38,9 @@ class ContactHelper {
       );
     });
   }
-
+  // foi realizada a torca do tipo da variavel de database para final, por que? só Deus sabe não achei essa resposta
   Future<Contact> saveContact(Contact contact) async {
-    Database dbContact = await db;
+    final dbContact = await db;
     contact.id = await dbContact.insert(contactTable, contact.toMap());
     return contact;
   }
@@ -54,8 +53,9 @@ class ContactHelper {
         whereArgs: [id]);
     if(maps.length > 0){
       return Contact.fromMap(maps.first);
-    } else {
-      return null;
+    }
+    else {
+      return Contact();
     }
   }
 
@@ -63,9 +63,9 @@ class ContactHelper {
     Database dbContact = await db;
     return await dbContact.delete(contactTable, where: "$idColumn = ?", whereArgs: [id]);
   }
-
+  //Realizada a troca da variavel do tipo Databases para tipo var, por que? só Deus sabe tambem não achei essa resposta
   Future<int> updateContact(Contact contact) async {
-    Database dbContact = await db;
+    var dbContact = await db;
     return await dbContact.update(contactTable,
         contact.toMap(),
         where: "$idColumn = ?",
