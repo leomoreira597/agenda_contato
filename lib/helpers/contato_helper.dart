@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-final String contactTable = "contactTable";
-final String idColumn = "idColumn";
-final String nameColumn = "nameColumn";
-final String emailColumn = "emailColumn";
-final String phoneColumn = "phoneColumn";
-final String imgColumn = "imgColumn";
+const String contactTable = "contactTable";
+const String idColumn = "idColumn";
+const String nameColumn = "nameColumn";
+const String emailColumn = "emailColumn";
+const String phoneColumn = "phoneColumn";
+const String imgColumn = "imgColumn";
 
 class ContactHelper {
 
@@ -51,7 +51,7 @@ class ContactHelper {
         columns: [idColumn, nameColumn, emailColumn, phoneColumn, imgColumn],
         where: "$idColumn = ?",
         whereArgs: [id]);
-    if(maps.length > 0){
+    if(maps.isNotEmpty){
       return Contact.fromMap(maps.first);
     }
     else {

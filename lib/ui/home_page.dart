@@ -1,5 +1,6 @@
-import 'dart:html';
+import 'dart:io';
 import 'package:agenda_contatos/helpers/contato_helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,7 +12,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   ContactHelper helper = ContactHelper();
-  List<Contact> contacts = [];
+  //tive que converter o tipo da lista de contact para dynamic porque simplesmente ele fala que uma lista dynamic não poderia ser associada ao tipo contact
+  //obvio que ta errado embora tenha funcionado mas a primeiro momento não sei como resolver isso terei que pesquisar mais tarde
+  List<dynamic> contacts = [];
 
   @override
   void initState() {
@@ -41,7 +44,9 @@ class _HomePageState extends State<HomePage> {
       body: ListView.builder(
           padding: const EdgeInsets.all(10.0),
           itemCount: contacts.length,
-          itemBuilder: (context, index) {}),
+          itemBuilder: (context, index) {
+            return _contectCard(context, index);
+          }),
     );
   }
 
@@ -60,12 +65,14 @@ class _HomePageState extends State<HomePage> {
                   image: DecorationImage(
                       image: contacts[index].img != null
                           ? FileImage(File(contacts[index].img))
-                          : AssetImage("assets/person.png")),
+                          : AssetImage("assets/person.png") as ImageProvider
+                  ),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: 10.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       contacts[index].name ?? "",
