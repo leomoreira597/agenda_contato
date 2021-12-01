@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-const String contactTable = "contactTable";
-const String idColumn = "idColumn";
-const String nameColumn = "nameColumn";
-const String emailColumn = "emailColumn";
-const String phoneColumn = "phoneColumn";
-const String imgColumn = "imgColumn";
+final String contactTable = "contactTable";
+final String idColumn = "idColumn";
+final String nameColumn = "nameColumn";
+final String emailColumn = "emailColumn";
+final String phoneColumn = "phoneColumn";
+final String imgColumn = "imgColumn";
 
 class ContactHelper {
 
@@ -16,15 +16,16 @@ class ContactHelper {
   factory ContactHelper() => _instance;
 
   ContactHelper.internal();
-//Retirada do Future para apenas o indicador "?", tá certo? só Deus sabe mas o erro sumiu
-  Database? _db;
 
-   get db async {
+  late Database _db;
+
+  Future<Database> get db async {
     if(_db != null){
+      return _db;
     } else {
       _db = await initDb();
+      return _db;
     }
-    return _db;
   }
 
   Future<Database> initDb() async {
@@ -38,14 +39,14 @@ class ContactHelper {
       );
     });
   }
-  // foi realizada a torca do tipo da variavel de database para final, por que? só Deus sabe não achei essa resposta
+
   Future<Contact> saveContact(Contact contact) async {
-    final dbContact = await db;
+    Database dbContact = await db;
     contact.id = await dbContact.insert(contactTable, contact.toMap());
     return contact;
   }
 
-  Future<Contact> getContact(int id) async {
+  Future<Contact?> getContact(int id) async {
     Database dbContact = await db;
     List<Map> maps = await dbContact.query(contactTable,
         columns: [idColumn, nameColumn, emailColumn, phoneColumn, imgColumn],
@@ -53,9 +54,8 @@ class ContactHelper {
         whereArgs: [id]);
     if(maps.isNotEmpty){
       return Contact.fromMap(maps.first);
-    }
-    else {
-      return Contact();
+    } else {
+      return null;
     }
   }
 
@@ -63,9 +63,9 @@ class ContactHelper {
     Database dbContact = await db;
     return await dbContact.delete(contactTable, where: "$idColumn = ?", whereArgs: [id]);
   }
-  //Realizada a troca da variavel do tipo Databases para tipo var, por que? só Deus sabe tambem não achei essa resposta
+
   Future<int> updateContact(Contact contact) async {
-    var dbContact = await db;
+    Database dbContact = await db;
     return await dbContact.update(contactTable,
         contact.toMap(),
         where: "$idColumn = ?",
@@ -96,11 +96,11 @@ class ContactHelper {
 
 class Contact {
 
-  int? id;
-  String name = "";
-  String email = "";
-  String phone = "";
-  String img = "";
+  late int id;
+  late String name;
+  late String email;
+  late String phone;
+  late String img;
 
   Contact();
 

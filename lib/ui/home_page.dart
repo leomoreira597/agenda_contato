@@ -12,14 +12,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   ContactHelper helper = ContactHelper();
-  //tive que converter o tipo da lista de contact para dynamic porque simplesmente ele fala que uma lista dynamic não poderia ser associada ao tipo contact
-  //obvio que ta errado embora tenha funcionado mas a primeiro momento não sei como resolver isso terei que pesquisar mais tarde
-  List<dynamic> contacts = [];
+
+  List<Contact> contacts = [];
 
   @override
   void initState() {
     super.initState();
-
     helper.getAllContacts().then((list) {
       setState(() {
         contacts = list;
@@ -54,7 +52,7 @@ class _HomePageState extends State<HomePage> {
     return GestureDetector(
       child: Card(
         child: Padding(
-          padding: EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
           child: Row(
             children: [
               Container(
@@ -65,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                   image: DecorationImage(
                       image: contacts[index].img != null
                           ? FileImage(File(contacts[index].img))
-                          : AssetImage("assets/person.png") as ImageProvider
+                          : const AssetImage("assets/person.png") as ImageProvider
                   ),
                 ),
               ),
