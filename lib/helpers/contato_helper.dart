@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-final String contactTable = "contactTable";
-final String idColumn = "idColumn";
-final String nameColumn = "nameColumn";
-final String emailColumn = "emailColumn";
-final String phoneColumn = "phoneColumn";
-final String imgColumn = "imgColumn";
+const String contactTable = "contactTable";
+const String idColumn = "idColumn";
+const String nameColumn = "nameColumn";
+const String emailColumn = "emailColumn";
+const String phoneColumn = "phoneColumn";
+const String imgColumn = "imgColumn";
 
 class ContactHelper {
 
@@ -17,14 +17,15 @@ class ContactHelper {
 
   ContactHelper.internal();
 
-  late Database _db;
+  static Database? _db;
 
   Future<Database> get db async {
     if(_db != null){
-      return _db;
-    } else {
+      return _db!;
+    }
+    else{
       _db = await initDb();
-      return _db;
+      return _db!;
     }
   }
 
@@ -63,7 +64,8 @@ class ContactHelper {
     Database dbContact = await db;
     return await dbContact.delete(contactTable, where: "$idColumn = ?", whereArgs: [id]);
   }
-
+  // solução encontrada aqui para tipo de lista não funciona em coisas do tipo map
+  // aparentimente aqui é outro caminho para se fazer no final a mesma coisa
   Future<int> updateContact(Contact contact) async {
     Database dbContact = await db;
     return await dbContact.update(contactTable,
@@ -71,8 +73,9 @@ class ContactHelper {
         where: "$idColumn = ?",
         whereArgs: [contact.id]);
   }
-
-  Future<List> getAllContacts() async {
+  //erro corrigido solução agora na nova versão do flutter é preciso especificar de novo to tipo da lista dentro do future
+  // só assim finciona
+  Future<List<Contact>> getAllContacts() async {
     Database dbContact = await db;
     List listMap = await dbContact.rawQuery("SELECT * FROM $contactTable");
     List<Contact> listContact = [];
@@ -96,11 +99,11 @@ class ContactHelper {
 
 class Contact {
 
-  late int id;
-  late String name;
-  late String email;
-  late String phone;
-  late String img;
+  int? id;
+  String name = "Novo Contato";
+  String email ="";
+  String phone ="";
+  String? img;
 
   Contact();
 
@@ -111,9 +114,10 @@ class Contact {
     phone = map[phoneColumn];
     img = map[imgColumn];
   }
-
-  Map toMap() {
-    Map<String, dynamic> map = {
+  //A correção esta aqui aparentimente se eu entendei direito tem que especificar o tipo do mapa e o tipo de dado
+  //agora te pergunto não era mais facil ter deixado tudo em um?
+  Map <String, dynamic> toMap() {
+    Map <String, dynamic> map = {
       nameColumn: name,
       emailColumn: email,
       phoneColumn: phone,
