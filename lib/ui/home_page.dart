@@ -3,6 +3,9 @@ import 'package:agenda_contatos/helpers/contato_helper.dart';
 import 'package:agenda_contatos/ui/contact_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+enum OrderOptions {oderaz, oderza}
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -29,6 +32,21 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Contatos"),
         backgroundColor: Colors.red,
         centerTitle: true,
+        actions: <Widget>[
+          PopupMenuButton<OrderOptions>(
+            itemBuilder: (context) => <PopupMenuEntry<OrderOptions>>[
+              const PopupMenuItem<OrderOptions>(
+                child: Text("Ordenar de A-Z"),
+                value: OrderOptions.oderaz,
+              ),
+              const PopupMenuItem<OrderOptions>(
+                child: Text("Ordenar de Z-A"),
+                value: OrderOptions.oderza,
+              ),
+            ],
+            onSelected: _orderList,
+          )
+        ],
       ),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
@@ -63,7 +81,8 @@ class _HomePageState extends State<HomePage> {
                      image: contacts[index].img != null
                         ? FileImage(File(contacts[index].img!))
                         : const AssetImage("assets/person.png")
-                            as ImageProvider
+                            as ImageProvider,
+                      fit: BoxFit.cover
                   ),
                 ),
               ),
@@ -122,6 +141,8 @@ class _HomePageState extends State<HomePage> {
                             primary: Colors.red,
                           ),
                           onPressed: () {
+                            Navigator.pop(context);
+                            launch("tel:${contacts[index].phone}");
                           },
                           child: const Text('Ligar'),
                         ),
@@ -184,4 +205,23 @@ class _HomePageState extends State<HomePage> {
       });
     });
   }
+
+  void _orderList(OrderOptions result){
+    switch (result) {
+      case OrderOptions.oderaz:
+        contacts.sort((a,b){
+         return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+        });
+        break;
+      case OrderOptions.oderza:
+        contacts.sort((a,b){
+         return b.name.toLowerCase().compareTo(a.name.toLowerCase());
+        });
+        break;
+    }
+    setState(() {
+
+    });
+  }
+
 }
